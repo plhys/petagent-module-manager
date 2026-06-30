@@ -536,13 +536,18 @@ class HookInstaller:
         if scripts:
             # 注入 CSS link（dev 模式从 public/ 加载）
             css_link = '<link rel="stylesheet" href="/petagent-theme.css">'
-            # 检查是否已注入过
-            if "petagent" not in html:
-                html = html.replace("</head>", css_link + "\n" + "\n".join(scripts) + "\n</head>")
-                source_html.write_text(html, encoding="utf-8")
-                self.log("source inject: index.html (dev mode)", "ok")
-            else:
-                self.log("source inject: already patched, skip", "info")
+            # 清理旧的 PetAgent 注入（避免重复堆积）
+            import re as _re
+            html = _re.sub(r'<link rel="stylesheet" href="/petagent-theme\.css">\s*', '', html)
+            html = _re.sub(r'<script>try\{.*?hermes-desktop-user-themes.*?\}catch\(e\)\{\}</script>\s*', '', html)
+            html = _re.sub(r'<script>try\{.*?hermes-desktop-theme-v2.*?\}catch\(e\)\{\}</script>\s*', '', html)
+            html = _re.sub(r'<script>\(function\(\).*?intro-hermes.*?\}\)\(\);</script>\s*', '', html)
+            html = _re.sub(r'<script>try\{.*?__hermesUpdateTranslations.*?\}catch\(e\)\{\}</script>\s*', '', html)
+            html = _re.sub(r'<script>\(function\(\).*?navigator\.language.*?\}\)\(\);</script>\s*', '', html)
+            html = _re.sub(r'<script>\s*\n\s*\(function installPetRendererBridge.*?</script>\s*', '', html, flags=_re.DOTALL)
+            html = html.replace("</head>", css_link + "\n" + "\n".join(scripts) + "\n</head>")
+            source_html.write_text(html, encoding="utf-8")
+            self.log("source inject: index.html (dev mode)", "ok")
 
         # 复制 CSS 到 public/ 供 Vite dev 模式加载
         css_src = None
@@ -929,10 +934,18 @@ class HookInstaller:
                         break
                 if css_src:
                     css_dst = app_dir / "dist" / "petagent-theme.css"
-                    if not css_dst.exists():
-                        shutil.copy2(str(css_src), str(css_dst))
-                        self.log("dist copy: petagent-theme.css", "ok")
+                    shutil.copy2(str(css_src), str(css_dst))
+                    self.log("dist copy: petagent-theme.css", "ok")
                     script_block = '<link rel="stylesheet" href="petagent-theme.css">\n' + script_block
+            # 清理旧的 PetAgent 注入（避免重复堆积）
+            import re as _re
+            html = _re.sub(r'<link rel="stylesheet" href="petagent-theme\.css">\s*', '', html)
+            html = _re.sub(r'<script>try\{.*?hermes-desktop-user-themes.*?\}catch\(e\)\{\}</script>\s*', '', html)
+            html = _re.sub(r'<script>try\{.*?hermes-desktop-theme-v2.*?\}catch\(e\)\{\}</script>\s*', '', html)
+            html = _re.sub(r'<script>\(function\(\).*?intro-hermes.*?\}\)\(\);</script>\s*', '', html)
+            html = _re.sub(r'<script>try\{.*?__hermesUpdateTranslations.*?\}catch\(e\)\{\}</script>\s*', '', html)
+            html = _re.sub(r'<script>\(function\(\).*?navigator\.language.*?\}\)\(\);</script>\s*', '', html)
+            html = _re.sub(r'<script>\s*\n\s*\(function installPetRendererBridge.*?</script>\s*', '', html, flags=_re.DOTALL)
             html = html.replace("</head>", script_block + "\n</head>")
             index_html.write_text(html, encoding="utf-8")
             self.log("dist inject: index.html", "ok")
