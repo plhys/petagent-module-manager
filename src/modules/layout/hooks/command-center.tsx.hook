@@ -1,0 +1,13 @@
+// ═══ PetAgent:layout ═══
+// 布局调整模块 — 渠道标签移到命令中心、产物面板移到右侧栏
+// 
+// 注意：此模块涉及修改 React 组件签名和结构，无法通过纯追加钩子实现。
+// 当前版本提供说明，建议手动应用或等待上游提供插件接口。
+//
+// 需要的改动：
+// 1. command-center/index.tsx: 添加 lazy 导入 MessagingView，添加 'channels' section
+// 2. right-sidebar/index.tsx: 添加 lazy 导入 ArtifactsView，添加 tab 切换
+//
+// 如需启用，请参考原始项目中的 patches/frontend/command-center.tsx.diff
+// 和 patches/frontend/right-sidebar.tsx.diff 手动打补丁。
+// ═══ End PetAgent:layout ═══

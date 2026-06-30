@@ -1,0 +1,38 @@
+// ═══ PetAgent:zh ═══
+// 追加中文翻译，不删除任何上游翻译 key
+
+import { useI18n } from '@/i18n'
+
+// 扩展命令中心翻译
+const _zh_extend = (t: ReturnType<typeof useI18n>['t']) => {
+  const _orig = t.commandCenter
+  if (_orig && _orig.sections && !_orig.sections.channels) {
+    _orig.sections.channels = '渠道'
+    _orig.sectionDescriptions.channels = '配置与管理消息平台'
+    _orig.sectionEntries.channels = { title: '渠道面板', detail: '配置与管理消息平台' }
+  }
+  if (_orig && _orig.system && _orig.system.restartGateway) {
+    _orig.system.restartMessaging = '重启消息服务'
+  }
+}
+
+// 便携版更新相关翻译
+if (typeof window !== 'undefined') {
+  const _origUpdate = (window as any).__hermesUpdateTranslations || {}
+  _origUpdate.portableTitle = '便携版更新'
+  _origUpdate.portableBody = '当前为 Hermes Desktop 离线部署便携版，应用内自动更新不可用。'
+  _origUpdate.portableDownload = '前往下载'
+  _origUpdate.portableUpdateMessage = '当前为 Hermes Desktop 离线部署便携版'
+  _origUpdate.portableQuarkLink = '夸克网盘'
+  _origUpdate.portableMobileLink = '移动云盘'
+  ;(window as any).__hermesUpdateTranslations = _origUpdate
+}
+
+// 模型设置翻译
+if (typeof window !== 'undefined') {
+  const _origModel = (window as any).__hermesModelTranslations || {}
+  _origModel.persistGlobalSession = '全局保存 (否则仅当前会话)'
+  _origModel.persistGlobal = '全局保存'
+  ;(window as any).__hermesModelTranslations = _origModel
+}
+// ═══ End PetAgent:zh ═══

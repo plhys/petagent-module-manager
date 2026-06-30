@@ -1,0 +1,7 @@
+/* ═══ PetAgent:theme ═══ */
+/* PetAgent 主题样式通过 petagent-theme.css 文件引入（文件拷贝方式），
+   不需要在 CSS 末尾 @import（CSS 规范要求 @import 必须在文件开头）。
+   此钩子仅作为安装标记，实际样式文件已拷贝到正确位置。
+   如果需要在 styles.css 中引入，请手动在文件顶部添加：
+   @import './petagent-theme.css'; */
+/* ═══ End PetAgent:theme ═══ */

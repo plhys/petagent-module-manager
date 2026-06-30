@@ -1,0 +1,16 @@
+// ═══ PetAgent:pet ═══
+// 直接轮询等待 mainWindow 出现，不依赖 app.whenReady()（因为 whenReady 在钩子之前已经调用了）
+// Windows 透明窗 + GPU 视频合成可能不可见，关闭 GPU 合成是可靠解法
+try { require('electron').app.commandLine.appendSwitch('disable-gpu-compositing'); } catch(_) {}
+
+;(function() {
+  try {
+    var check = setInterval(function() {
+      if (typeof mainWindow !== 'undefined' && mainWindow && !mainWindow.isDestroyed()) {
+        clearInterval(check);
+        try { require('./pet/pet-init.cjs').initPet(mainWindow); } catch(e) { console.error('[pet] init error:', e.message); }
+      }
+    }, 50);
+  } catch(e) { console.error('[pet] hook error:', e.message); }
+})();
+// ═══ End PetAgent:pet ═══

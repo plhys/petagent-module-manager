@@ -1,0 +1,11 @@
+# 钩子文件 → 目标文件映射表
+# 安装时将钩子内容追加到目标文件末尾，卸载时删除标记之间的内容
+# 
+# 注意：theme 和 zh 模块不再使用源文件钩子（需要 npm run build 重新编译）。
+# 改用 dist_inject 机制：在解包 asar 后直接修改 dist/index.html 和 dist/assets/*.css。
+
+main.cjs.hook:           apps/desktop/electron/main.cjs
+preload.cjs.hook:        apps/desktop/electron/preload.cjs
+bootstrap-runner.hook:   apps/desktop/electron/bootstrap-runner.cjs
+command-center.tsx.hook: apps/desktop/src/app/command-center/index.tsx
+right-sidebar.tsx.hook:  apps/desktop/src/app/right-sidebar/index.tsx

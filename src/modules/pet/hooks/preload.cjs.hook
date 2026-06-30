@@ -1,0 +1,14 @@
+// ═══ PetAgent:pet ═══
+// 注意：preload.cjs 末尾的 contextBridge.exposeInMainWorld(...) 没有分号，
+// IIFE 必须以 ; 开头，否则被解析为 exposeInMainWorld(...)(...) → preload 整体崩溃
+;(function() {
+  try {
+    var electron = require('electron');
+    electron.contextBridge.exposeInMainWorld('hermesPetBridge', {
+      sendPetEvent: function(data) { electron.ipcRenderer.send('hermes-pet:event', data); }
+    });
+  } catch(e) {}
+})();
+
+require('./pet/pet-renderer-bridge.cjs').injectPetRendererBridge();
+// ═══ End PetAgent:pet ═══

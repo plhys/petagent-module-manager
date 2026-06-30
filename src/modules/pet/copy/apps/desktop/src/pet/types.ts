@@ -1,0 +1,10 @@
+export type AnimState =
+  | 'begin'
+  | 'static'
+  | 'listening'
+  | 'task-start'
+  | 'task-loop'
+  | 'task-leave'
+  | 'sleep-start'
+  | 'sleep-loop'
+  | 'sleep-leave'

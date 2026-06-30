@@ -1,0 +1,112 @@
+# PetAgent 扩展包 — 模块清单 (钩子注入版)
+
+name: PetAgent
+version: "2.0.6"
+description: "Hermes Agent 独立扩展包 — 桌面宠物 + 主题皮肤 + 中文语言包 + 出图插件（模块化钩子注入）"
+author: "PetAgent"
+compatible: "hermes-agent >= v0.16.0"
+
+modules:
+  # ============================================================
+  # 模块 1: 桌面宠物
+  # ============================================================
+  - id: pet
+    name: "🐾 桌面宠物"
+    description: "可拖拽的桌面吉祥物，9种动画状态，5分钟无操作自动休眠"
+    requires: [theme]
+    hooks:
+      - main.cjs.hook
+      - preload.cjs.hook
+      - bootstrap-runner.hook
+    copy:
+      - apps/desktop/electron/pet/
+      - apps/desktop/src/pet/
+      - apps/desktop/src/pet-bubble/
+      - apps/desktop/public/pet-assets/
+      - apps/desktop/public/pet.html
+      - apps/desktop/public/pet-agent-logo.png
+      - apps/desktop/public/pet-agent-logo.jpg
+      - apps/desktop/public/logo.png
+      - apps/desktop/dist-built/
+    submodules:
+      - id: pet-bubble
+        name: "智能气泡卡片"
+        description: "AI回复时弹出气泡，自动识别天气/股票/代码等8种场景"
+        requires: [pet]
+
+  # ============================================================
+  # 模块 2: 主题皮肤
+  # 原理：通过 localStorage 用户主题机制注入，不修改编译后的 JS
+  # 安装时在 dist/index.html 中预填 localStorage，在 dist/assets/*.css 中 @import 皮肤文件
+  # ============================================================
+  - id: theme
+    name: "🎨 PetAgent 主题皮肤"
+    description: "PetClaw 单色品牌色板（亮色+暗色），气泡右对齐+圆角+三角尾巴，侧边栏紧凑配色，欢迎页品牌标识"
+    dist_inject:
+      theme: true
+    copy:
+      - apps/desktop/src/custom-theme.css
+      - apps/desktop/src/petagent-theme.css
+
+  # ============================================================
+  # 模块 3: 中文语言包
+  # 原理：通过 window 全局变量注入翻译，不修改编译后的 JS
+  # 安装时在 dist/index.html 中注入 window.__hermesUpdateTranslations 和 window.__hermesModelTranslations
+  # ============================================================
+  - id: zh
+    name: "🌐 中文语言包"
+    description: "界面中文翻译 + API供应商中英双语 + 技能名称中英双语（200+项）"
+    dist_inject:
+      zh: true
+    copy:
+      - apps/desktop/src/app/settings/provider-translations.ts
+      - apps/desktop/src/app/skills/translations.ts
+
+  # ============================================================
+  # 模块 4: 出图插件
+  # ============================================================
+  - id: image-gen
+    name: "🔌 出图插件"
+    description: "Gemini + 豆包图片生成"
+    copy:
+      - plugins/image-gen/
+      - plugins/image_gen/
+    submodules:
+      - id: image-gen-gemini
+        name: "Gemini 图片生成"
+        description: "Google Imagen，支持文生图+图生图+迭代改图"
+        requires: [image-gen]
+      - id: image-gen-doubao
+        name: "豆包图片生成"
+        description: "字节 Doubao，支持文生图+图生图"
+        requires: [image-gen]
+
+  # ============================================================
+  # 模块 5: 布局调整
+  # ============================================================
+  - id: layout
+    name: "📐 布局调整"
+    description: "渠道标签移到命令中心、产物面板移到右侧栏（需手动修改，暂不可用）"
+    disabled: true
+    hooks:
+      - command-center.tsx.hook
+      - right-sidebar.tsx.hook
+
+# ============================================================
+# 推荐预设
+# ============================================================
+presets:
+  recommended:
+    name: "⭐ 推荐配置"
+    description: "桌面宠物 + 主题皮肤 + 中文语言包 + 出图插件"
+    modules: [pet, theme, zh, image-gen]
+  
+  full:
+    name: "🛠 全部"
+    description: "所有模块"
+    modules: [pet, theme, zh, image-gen, layout]
+  
+  minimal:
+    name: "🎨 仅主题"
+    description: "只安装皮肤和语言包"
+    modules: [theme, zh]

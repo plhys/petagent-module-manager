@@ -1,0 +1,158 @@
+/* ═══ PetAgent 主题皮肤 ═══
+ * 独立主题文件，通过 @import 加载到 styles.css 末尾
+ * 不修改任何上游 CSS，仅通过 CSS 层叠覆盖
+ * ═══════════════════════════════════ */
+
+/* ── 品牌色变量覆盖 ── */
+:root {
+  --theme-foreground: #18181b;
+  --theme-primary: #18181b;
+  --theme-secondary: color-mix(in srgb, #18181b 7%, #ffffff);
+  --theme-accent-soft: color-mix(in srgb, #18181b 10%, #ffffff);
+  --theme-midground: #18181b;
+  --theme-background-seed: #F8F8F8;
+  --theme-sidebar-seed: #ECECEE;
+  --theme-bubble-seed: color-mix(in srgb, #18181b 6%, #ffffff);
+  --theme-neutral-chrome: #F8F8F8;
+  --theme-neutral-sidebar: #ECECEE;
+  --theme-neutral-card: #ffffff;
+  --theme-mix-chrome: 92%;
+  --theme-mix-sidebar: 100%;
+  --theme-mix-card: 22%;
+  --theme-mix-elevated: 28%;
+  --theme-mix-bubble: 0%;
+
+  /* 亮色模式：黑底白字气泡 */
+  --dt-user-bubble: #18181b;
+  --dt-user-bubble-foreground: #ffffff;
+  --dt-user-bubble-border: #3f3f46;
+  --dt-line-height: 1.6;
+  --conversation-text-font-size: 0.9375rem;
+  --sidebar-edge-border: transparent;
+}
+
+/* ── 暗色模式 ── */
+:root.dark {
+  --theme-mix-chrome: 68%;
+  --theme-mix-card: 34%;
+  --theme-mix-elevated: 42%;
+  --theme-mix-bubble: 42%;
+  --theme-sidebar-seed: #2B2B2B;
+  --theme-neutral-chrome: #09090b;
+  --theme-neutral-sidebar: #2B2B2B;
+  --theme-neutral-card: #18181b;
+  --sidebar-edge-border: transparent;
+  --composer-ring-strength: 1.3;
+  --backdrop-invert-mul: 0;
+
+  /* 暗色模式：灰底黑字气泡 */
+  --dt-user-bubble: #d4d4d4;
+  --dt-user-bubble-foreground: #1a1a1a;
+  --dt-user-bubble-border: #a0a0a0;
+}
+
+/* ── 对话气泡：用户消息靠右对齐，圆角+三角尾巴 ──
+ * DOM 结构：aui_user-message-root > .composer-human-message > aui_user-inline-text
+ * 去除 .composer-human-message 的外层方块（Tailwind 自带 rounded-xl border bg）
+ * 只保留内层 aui_user-inline-text 的气泡样式（3圆角+小尾巴） ── */
+[data-slot='aui_user-message-root'] {
+  margin-left: auto !important;
+  margin-right: 0 !important;
+  max-width: 85% !important;
+  background: transparent !important;
+  padding: 0 !important;
+}
+
+/* 移除 .composer-human-message 的外层方块样式 */
+[data-slot='aui_user-message-root'] .composer-human-message {
+  background: transparent !important;
+  border-color: transparent !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+}
+
+/* 内层文本气泡：3圆角+小尾巴 */
+[data-slot='aui_user-message-root'] [data-slot='aui_user-inline-text'] {
+  background: var(--dt-user-bubble) !important;
+  color: var(--dt-user-bubble-foreground) !important;
+  border: 1px solid var(--dt-user-bubble-border) !important;
+  border-radius: 1rem 1rem 0.25rem 1rem !important;
+  padding: 0.625rem 0.875rem !important;
+  position: relative !important;
+}
+
+/* 小尾巴三角 — 双层叠加，边框不断开 */
+/* ::before = 边框三角（稍大），::after = 填充三角（稍小），叠在一起形成连续边框 */
+[data-slot='aui_user-message-root'] [data-slot='aui_user-inline-text']::before {
+  content: '';
+  position: absolute;
+  bottom: -8px;
+  right: 13px;
+  width: 0;
+  height: 0;
+  border-left: 8px solid transparent;
+  border-right: 8px solid transparent;
+  border-top: 8px solid var(--dt-user-bubble-border);
+}
+
+[data-slot='aui_user-message-root'] [data-slot='aui_user-inline-text']::after {
+  content: '';
+  position: absolute;
+  bottom: -6px;
+  right: 14px;
+  width: 0;
+  height: 0;
+  border-left: 7px solid transparent;
+  border-right: 7px solid transparent;
+  border-top: 7px solid var(--dt-user-bubble);
+}
+
+/* ── 侧边栏紧凑配色 ── */
+[data-hermes-theme="petagent"] .sidebar {
+  background: var(--sidebar) !important;
+  border-right-color: var(--sidebar-edge-border) !important;
+}
+
+/* ── 欢迎页品牌标识 ── */
+.intro-hermes { display: block; }
+.intro-petagent { display: none; }
+
+[data-hermes-theme="petagent"] .intro-hermes { display: none; }
+[data-hermes-theme="petagent"] .intro-petagent { display: block; }
+
+/* ── 工具块左侧边框 ── */
+[data-slot='aui_assistant-message-content'] > :is([data-slot='tool-block'], [data-slot='aui_thinking-disclosure']) {
+  border-left: 2px solid var(--ui-stroke-tertiary);
+  padding-left: 0.625rem;
+  margin-left: 0.25rem;
+}
+
+/* ── 用户消息缩略图 ── */
+.composer-human-message [data-slot='aui_directive-image'] img,
+.composer-human-message [data-slot='aui_embedded-image'] img,
+.composer-human-message [data-slot='aui_zoomable-image'] img {
+  max-height: 8rem;
+  max-width: 12rem;
+  border-radius: 0.5rem;
+  border: 1px solid var(--ui-stroke-tertiary);
+  object-fit: cover;
+  cursor: pointer;
+  transition: box-shadow 0.15s;
+}
+
+/* ── 欢迎页品牌标识图片 ── */
+.intro-petagent img {
+  opacity: 0.4;
+}
+
+/* ── 代码卡片流式动画 ── */
+@keyframes code-card-stream-glow {
+  from {
+    border-color: color-mix(in srgb, var(--dt-ring) 18%, var(--ui-stroke-tertiary));
+    box-shadow: 0 0 0 0.0625rem color-mix(in srgb, var(--dt-ring) 6%, transparent), 0 0.5rem 1.5rem color-mix(in srgb, var(--dt-ring) 5%, transparent);
+  }
+  to {
+    border-color: color-mix(in srgb, var(--dt-ring) 32%, var(--ui-stroke-tertiary));
+    box-shadow: 0 0 0 0.0625rem color-mix(in srgb, var(--dt-ring) 12%, transparent), 0 0.75rem 2rem color-mix(in srgb, var(--dt-ring) 10%, transparent);
+  }
+}

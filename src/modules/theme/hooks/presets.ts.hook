@@ -1,0 +1,83 @@
+// ═══ PetAgent:theme ═══
+// 追加 PetAgent 主题到主题列表。
+// 通过 patch 方式在 presets.ts 文件末尾追加代码，
+// 如果 BUILTIN_THEMES 是 const 数组，此钩子会通过劫持导出来实现。
+// 安全策略：不修改任何现有代码，失败时静默降级。
+
+;(function() {
+  try {
+    const PETCLAW_ACCENT = '#18181B';
+    const petclawTint = (pct) => `color-mix(in srgb, ${PETCLAW_ACCENT} ${pct}%, #FFFFFF)`;
+    const petclawTintTransparent = (pct) => `color-mix(in srgb, ${PETCLAW_ACCENT} ${pct}%, transparent)`;
+
+    var petagentTheme = {
+      name: 'petagent',
+      label: 'PetAgent',
+      description: 'Clean monochrome — PetClaw-inspired',
+      colors: {
+        background: '#FFFFFF',
+        foreground: '#18181B',
+        card: '#FFFFFF',
+        cardForeground: '#18181B',
+        muted: petclawTint(5),
+        mutedForeground: '#6B6B70',
+        popover: '#FFFFFF',
+        popoverForeground: '#18181B',
+        primary: PETCLAW_ACCENT,
+        primaryForeground: '#FCFCFC',
+        secondary: petclawTint(7),
+        secondaryForeground: '#242432',
+        accent: petclawTint(10),
+        accentForeground: '#202030',
+        border: petclawTintTransparent(22),
+        input: petclawTintTransparent(30),
+        ring: PETCLAW_ACCENT,
+        midground: PETCLAW_ACCENT,
+        composerRing: PETCLAW_ACCENT,
+        destructive: '#C72E4D',
+        destructiveForeground: '#FCFCFC',
+        chart1: PETCLAW_ACCENT,
+        chart2: petclawTint(30),
+        chart3: petclawTint(50),
+        chart4: petclawTint(80),
+        chart5: '#A1A1A6',
+        dark: {
+          background: '#0D0D0E',
+          foreground: '#E4E4E7',
+          card: '#18181B',
+          cardForeground: '#E4E4E7',
+          muted: '#27272C',
+          mutedForeground: '#A1A1A6',
+          popover: '#18181B',
+          popoverForeground: '#E4E4E7',
+          primary: '#E4E4E7',
+          primaryForeground: '#0D0D0E',
+          secondary: '#27272C',
+          secondaryForeground: '#D4D4D8',
+          accent: '#27272C',
+          accentForeground: '#E4E4E7',
+          border: petclawTintTransparent(22),
+          input: petclawTintTransparent(30),
+          ring: '#E4E4E7',
+          midground: '#E4E4E7',
+          composerRing: '#E4E4E7',
+          destructive: '#C72E4D',
+          destructiveForeground: '#FCFCFC',
+          chart1: '#E4E4E7',
+          chart2: '#A1A1A6',
+          chart3: '#71717A',
+          chart4: '#52525B',
+          chart5: '#3F3F46',
+        }
+      }
+    };
+
+    // 尝试追加到 BUILTIN_THEMES（如果是 const 会静默失败）
+    if (typeof BUILTIN_THEMES !== 'undefined' && Array.isArray(BUILTIN_THEMES)) {
+      if (!BUILTIN_THEMES.find(function(t) { return t.name === 'petagent'; })) {
+        try { BUILTIN_THEMES.push(petagentTheme); } catch(_) {}
+      }
+    }
+  } catch(_) {}
+})();
+// ═══ End PetAgent:theme ═══

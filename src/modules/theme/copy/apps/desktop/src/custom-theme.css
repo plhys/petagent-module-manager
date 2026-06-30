@@ -1,0 +1,51 @@
+/**
+ * PetAgent Custom Theme — 自定义样式包
+ */
+
+/* === 1. Intro 页面 — PetAgent vs Hermes 切换 === */
+.intro-hermes { display: block; }
+.intro-petagent { display: none; }
+
+[data-hermes-theme="petagent"] .intro-hermes { display: none; }
+[data-hermes-theme="petagent"] .intro-petagent { display: block; }
+
+/* === 2. 聊天气泡 — 右对齐 + 右下角小尾巴 === */
+
+/* 整体右对齐 */
+[data-hermes-theme="petagent"] [data-slot="aui_user-message-root"] {
+  margin-left: auto !important;
+  width: max-content !important;
+  max-width: 85% !important;
+}
+
+/* 气泡本体：右下角留小尾巴（3px），其余圆角 */
+[data-hermes-theme="petagent"] [data-slot="aui_user-message-root"] .human-bubble {
+  border-radius: 11px 11px 3px 11px !important;
+  position: relative !important;
+}
+
+/* 小尾巴三角 */
+[data-hermes-theme="petagent"] [data-slot="aui_user-message-root"] .human-bubble::after {
+  content: '';
+  position: absolute;
+  bottom: -7px;
+  right: 14px;
+  width: 0;
+  height: 0;
+  border-left: 7px solid transparent;
+  border-right: 7px solid transparent;
+  border-top: 7px solid var(--dt-user-bubble);
+}
+
+/* === 3. 侧边栏 — 黑色文字 === */
+[data-hermes-theme="petagent"] [data-slot="sidebar"] {
+  color: #111 !important;
+}
+
+/* === 4. 暗色模式 Logo 反色 — 通过 CSS 变量 --dt-logo-filter === */
+[data-slot="sidebar"] img[src*="logo"] {
+  filter: var(--dt-logo-filter, none);
+}
+.intro-petagent img {
+  filter: var(--dt-logo-filter, none);
+}

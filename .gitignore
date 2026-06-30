@@ -1,0 +1,29 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+
+# Build output
+dist/
+dist-build/
+
+# Node
+node_modules/
+
+# PyInstaller
+*.spec.bak
+build/
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Temp
+backup/
+temp_*

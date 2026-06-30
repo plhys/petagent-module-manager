@@ -1,0 +1,8 @@
+// ═══ PetAgent:theme ═══
+// 追加 PetAgent 品牌标识到欢迎页
+// 在 intro.tsx 组件末尾注入 CSS 样式来控制显示
+//   - .intro-hermes 默认可见
+//   - .intro-petagent 仅当主题为 petagent 时可见
+//   - 用 petagent-theme.css 中的 [data-hermes-theme="petagent"] 选择器控制
+// 无需修改 intro.tsx 组件代码
+// ═══ End PetAgent:theme ═══

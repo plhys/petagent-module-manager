@@ -1,0 +1,92 @@
+{
+  "name": "petagent-manager",
+  "version": "2.0.4",
+  "description": "PetAgent 模块管理器 — Hermes Agent 扩展补丁一键安装工具",
+  "author": "PetAgent",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "build": "electron-builder --win portable"
+  },
+  "build": {
+    "appId": "com.petagent.manager",
+    "productName": "PetAgent模块管理器",
+    "directories": {
+      "output": "../../dist"
+    },
+    "win": {
+      "target": "portable",
+      "icon": "icon.ico"
+    },
+    "extraResources": [
+      {
+        "from": "../panel.html",
+        "to": "panel.html"
+      },
+      {
+        "from": "../panel.css",
+        "to": "panel.css"
+      },
+      {
+        "from": "../panel.js",
+        "to": "panel.js"
+      },
+      {
+        "from": "../install.py",
+        "to": "backend/install.py"
+      },
+      {
+        "from": "../installer.py",
+        "to": "backend/installer.py"
+      },
+      {
+        "from": "../scanner.py",
+        "to": "backend/scanner.py"
+      },
+      {
+        "from": "../server.py",
+        "to": "backend/server.py"
+      },
+      {
+        "from": "../uninstall.py",
+        "to": "backend/uninstall.py"
+      },
+      {
+        "from": "../cleanup.py",
+        "to": "backend/cleanup.py"
+      },
+      {
+        "from": "../manifest.yaml",
+        "to": "backend/manifest.yaml"
+      },
+      {
+        "from": "../hooks.yaml",
+        "to": "backend/hooks.yaml"
+      },
+      {
+        "from": "../modules",
+        "to": "backend/modules"
+      },
+      {
+        "from": "node_modules/@electron/asar",
+        "to": "node_modules/@electron/asar"
+      },
+      {
+        "from": "node_modules/.bin/asar.cmd",
+        "to": "node_modules/.bin/asar.cmd"
+      },
+      {
+        "from": "node_modules/.bin/asar",
+        "to": "node_modules/.bin/asar"
+      }
+    ]
+  },
+  "devDependencies": {
+    "electron": "^33.4.11",
+    "electron-builder": "^25.0.0"
+  },
+  "dependencies": {
+    "@electron/asar": "^3.4.0",
+    "js-yaml": "^4.1.0"
+  }
+}
