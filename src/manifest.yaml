@@ -49,6 +49,7 @@ modules:
     copy:
       - apps/desktop/src/custom-theme.css
       - apps/desktop/src/petagent-theme.css
+      - apps/desktop/dist/logo.png
 
   # ============================================================
   # 模块 3: 中文语言包

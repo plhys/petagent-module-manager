@@ -9,10 +9,7 @@
 [data-hermes-theme="petagent"] .intro-hermes { display: none; }
 [data-hermes-theme="petagent"] .intro-petagent { display: block; }
 
-/* === 2. 暗色模式 Logo 反色 === */
-[data-slot="sidebar"] img[src*="logo"] {
-  filter: var(--dt-logo-filter, none);
-}
+/* === 2. 暗色模式 PetAgent Logo 反色 === */
 .intro-petagent img {
   filter: var(--dt-logo-filter, none);
 }
