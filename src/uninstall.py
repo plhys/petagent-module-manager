@@ -45,6 +45,43 @@ def remove_hook_blocks(content: str) -> str:
     return re.sub(pattern, '', content, flags=re.DOTALL)
 
 
+def _clean_html_injections(html: str) -> str:
+    """清理源码 index.html 中所有 PetAgent 注入的 <script> 和 <link>"""
+    # 删除 petagent-theme.css 引用
+    html = re.sub(r'\s*<link rel="stylesheet" href="[^"]*petagent-theme\.css"[^>]*>', '', html)
+    # 删除 navigator.language 覆盖脚本
+    html = re.sub(
+        r'\s*<script>\(function\(\)\{try\{Object\.defineProperty\(navigator,"language".*?\}\}\)\(\);</script>',
+        '', html, flags=re.DOTALL
+    )
+    # 删除中文翻译注入
+    html = re.sub(
+        r'\s*<script>try\{var u=window\.__hermesUpdateTranslations.*?\}catch\(e\)\{\}</script>',
+        '', html, flags=re.DOTALL
+    )
+    # 删除 localStorage 主题注册
+    html = re.sub(
+        r'\s*<script>try\{var e=localStorage\.getItem\("hermes-desktop-user-themes-v1"\).*?\}catch\(e\)\{\}</script>',
+        '', html, flags=re.DOTALL
+    )
+    # 删除 active theme 设置
+    html = re.sub(
+        r'\s*<script>try\{localStorage\.setItem\("hermes-desktop-theme-v2","petagent"\)\s*\}catch\(e\)\{\}</script>',
+        '', html
+    )
+    # 删除欢迎页品牌标识 DOM 注入
+    html = re.sub(
+        r'\s*<script>\(function\(\)\{var done=!1;function inject\(\).*?\}\)\(\);</script>',
+        '', html, flags=re.DOTALL
+    )
+    # 删除 pet renderer bridge
+    html = re.sub(
+        r'\s*<script>\s*\n\s*\(function installPetRendererBridge.*?</script>',
+        '', html, flags=re.DOTALL
+    )
+    return html
+
+
 def remove_css_hook_blocks(content: str) -> str:
     """移除 CSS 中的钩子标记"""
     pattern = r'\s*/\* ═══ PetAgent:.+? ═══ \*/\r?\n.*?/\* ═══ End PetAgent:.+? ═══ \*/\s*'
@@ -373,16 +410,25 @@ def main():
 
     emit("info", f"移除了 {removed_hooks} 个钩子，删除了 {removed_files} 个文件")
 
-    # 3. 恢复 app.asar
+    # 3. 清理源码 index.html（开发模式入口）
+    source_html = target / "apps" / "desktop" / "index.html"
+    if source_html.exists():
+        html = source_html.read_text(encoding="utf-8")
+        if "PetAgent" in html or "petagent" in html or "hermes-desktop-user-themes-v1" in html:
+            html = _clean_html_injections(html)
+            source_html.write_text(html, encoding="utf-8")
+            emit("ok", "已清理源码 index.html")
+
+    # 4. 恢复 app.asar
     _restore_asar(target, emit)
 
-    # 4. 清理提取的 app/ 目录（如果存在）
+    # 5. 清理提取的 app/ 目录（如果存在）
     app_dir = target / "apps" / "desktop" / "release" / "win-unpacked" / "resources" / "app"
     if app_dir.exists():
         shutil.rmtree(str(app_dir), ignore_errors=True)
         emit("ok", "已删除 app/ 覆盖目录")
 
-    # 5. 删除版本标记文件
+    # 6. 删除版本标记文件
     version_marker = target / ".petagent-version"
     if version_marker.exists():
         try:

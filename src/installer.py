@@ -425,8 +425,12 @@ class HookInstaller:
                 continue
 
             if dist_inject.get("theme"):
+                # 亮色 = Nous / 暗色 = Mono
+                # 通过 localStorage 注册为用户主题，兼容编译版 asar
+                # 若 Hermes 源码已有 petagent 内置主题，user-themes.ts 会自动跳过此注入
                 theme_colors = {
-                    "name": "petagent", "label": "PetAgent", "description": "Clean monochrome",
+                    "name": "petagent", "label": "PetAgent",
+                    "description": "亮色 Nous + 暗色 Mono",
                     "colors": {
                         "background": "#FFFFFF", "foreground": "#18181B",
                         "card": "#FFFFFF", "cardForeground": "#18181B",
@@ -438,28 +442,24 @@ class HookInstaller:
                         "border": "#E0E0E0", "input": "#E8E8E8",
                         "ring": "#18181B", "midground": "#18181B",
                         "composerRing": "#18181B",
-                        "destructive": "#C72E4D", "destructiveForeground": "#FCFCFC",
-                        "chart1": "#18181B", "chart2": "#A1A1A6",
-                        "chart3": "#71717A", "chart4": "#52525B", "chart5": "#3F3F46",
+                        "destructive": "#B94A3A", "destructiveForeground": "#FFFFFF",
                         "sidebarBackground": "#ECECEE", "sidebarBorder": "#E0E0E0",
-                        "userBubble": "#18181b", "userBubbleBorder": "#3f3f46",
-                        "dark": {
-                            "background": "#0D0D0E", "foreground": "#E4E4E7",
-                            "card": "#18181B", "cardForeground": "#E4E4E7",
-                            "muted": "#27272C", "mutedForeground": "#A1A1A6",
-                            "popover": "#18181B", "popoverForeground": "#E4E4E7",
-                            "primary": "#E4E4E7", "primaryForeground": "#0D0D0E",
-                            "secondary": "#27272C", "secondaryForeground": "#D4D4D8",
-                            "accent": "#27272C", "accentForeground": "#E4E4E7",
-                            "border": "#3F3F46", "input": "#3F3F46",
-                            "ring": "#E4E4E7", "midground": "#E4E4E7",
-                            "composerRing": "#E4E4E7",
-                            "destructive": "#C72E4D", "destructiveForeground": "#FCFCFC",
-                            "chart1": "#E4E4E7", "chart2": "#A1A1A6",
-                            "chart3": "#71717A", "chart4": "#52525B", "chart5": "#3F3F46",
-                            "sidebarBackground": "#2B2B2B", "sidebarBorder": "#404040",
-                            "userBubble": "#d4d4d4", "userBubbleBorder": "#a0a0a0"
-                        }
+                        "userBubble": "#f0f0f0", "userBubbleBorder": "#a0a0a0"
+                    },
+                    "darkColors": {
+                        "background": "#0e0e0e", "foreground": "#eaeaea",
+                        "card": "#141414", "cardForeground": "#eaeaea",
+                        "muted": "#1e1e1e", "mutedForeground": "#808080",
+                        "popover": "#181818", "popoverForeground": "#eaeaea",
+                        "primary": "#eaeaea", "primaryForeground": "#0e0e0e",
+                        "secondary": "#262626", "secondaryForeground": "#c8c8c8",
+                        "accent": "#222222", "accentForeground": "#d8d8d8",
+                        "border": "#2a2a2a", "input": "#2a2a2a",
+                        "ring": "#9a9a9a", "midground": "#9a9a9a",
+                        "composerRing": "#9a9a9a",
+                        "destructive": "#a84040", "destructiveForeground": "#fef2f2",
+                        "sidebarBackground": "#0a0a0a", "sidebarBorder": "#202020",
+                        "userBubble": "#1a1a1a", "userBubbleBorder": "#363636"
                     }
                 }
                 theme_json = _json.dumps(theme_colors, ensure_ascii=False)
@@ -801,8 +801,11 @@ class HookInstaller:
                 continue
 
             if dist_inject.get("theme"):
+                # 亮色 = Nous / 暗色 = Mono
+                # 通过 localStorage 注册为用户主题，兼容编译版 asar 和源码模式
                 theme_colors = {
-                    "name": "petagent", "label": "PetAgent", "description": "Clean monochrome",
+                    "name": "petagent", "label": "PetAgent",
+                    "description": "亮色 Nous + 暗色 Mono",
                     "colors": {
                         "background": "#FFFFFF", "foreground": "#18181B",
                         "card": "#FFFFFF", "cardForeground": "#18181B",
@@ -814,32 +817,27 @@ class HookInstaller:
                         "border": "#E0E0E0", "input": "#E8E8E8",
                         "ring": "#18181B", "midground": "#18181B",
                         "composerRing": "#18181B",
-                        "destructive": "#C72E4D", "destructiveForeground": "#FCFCFC",
-                        "chart1": "#18181B", "chart2": "#A1A1A6",
-                        "chart3": "#71717A", "chart4": "#52525B", "chart5": "#3F3F46",
+                        "destructive": "#B94A3A", "destructiveForeground": "#FFFFFF",
                         "sidebarBackground": "#ECECEE", "sidebarBorder": "#E0E0E0",
-                        "userBubble": "#18181b", "userBubbleBorder": "#3f3f46",
-                        "dark": {
-                            "background": "#0D0D0E", "foreground": "#E4E4E7",
-                            "card": "#18181B", "cardForeground": "#E4E4E7",
-                            "muted": "#27272C", "mutedForeground": "#A1A1A6",
-                            "popover": "#18181B", "popoverForeground": "#E4E4E7",
-                            "primary": "#E4E4E7", "primaryForeground": "#0D0D0E",
-                            "secondary": "#27272C", "secondaryForeground": "#D4D4D8",
-                            "accent": "#27272C", "accentForeground": "#E4E4E7",
-                            "border": "#3F3F46", "input": "#3F3F46",
-                            "ring": "#E4E4E7", "midground": "#E4E4E7",
-                            "composerRing": "#E4E4E7",
-                            "destructive": "#C72E4D", "destructiveForeground": "#FCFCFC",
-                            "chart1": "#E4E4E7", "chart2": "#A1A1A6",
-                            "chart3": "#71717A", "chart4": "#52525B", "chart5": "#3F3F46",
-                            "sidebarBackground": "#2B2B2B", "sidebarBorder": "#404040",
-                            "userBubble": "#d4d4d4", "userBubbleBorder": "#a0a0a0"
-                        }
+                        "userBubble": "#f0f0f0", "userBubbleBorder": "#a0a0a0"
+                    },
+                    "darkColors": {
+                        "background": "#0e0e0e", "foreground": "#eaeaea",
+                        "card": "#141414", "cardForeground": "#eaeaea",
+                        "muted": "#1e1e1e", "mutedForeground": "#808080",
+                        "popover": "#181818", "popoverForeground": "#eaeaea",
+                        "primary": "#eaeaea", "primaryForeground": "#0e0e0e",
+                        "secondary": "#262626", "secondaryForeground": "#c8c8c8",
+                        "accent": "#222222", "accentForeground": "#d8d8d8",
+                        "border": "#2a2a2a", "input": "#2a2a2a",
+                        "ring": "#9a9a9a", "midground": "#9a9a9a",
+                        "composerRing": "#9a9a9a",
+                        "destructive": "#a84040", "destructiveForeground": "#fef2f2",
+                        "sidebarBackground": "#0a0a0a", "sidebarBorder": "#202020",
+                        "userBubble": "#1a1a1a", "userBubbleBorder": "#363636"
                     }
                 }
                 theme_json = _json.dumps(theme_colors, ensure_ascii=False)
-                # 始终覆盖更新 petagent 主题（解决旧版本颜色残留问题）
                 scripts.append(
                     '<script>try{var e=localStorage.getItem("hermes-desktop-user-themes-v1");'
                     'var t=e?JSON.parse(e):{};'
@@ -847,7 +845,6 @@ class HookInstaller:
                     'localStorage.setItem("hermes-desktop-user-themes-v1",JSON.stringify(t))'
                     '}catch(e){}</script>'
                 )
-                # 设为默认主题（始终设置，让更新生效）
                 scripts.append(
                     '<script>try{localStorage.setItem("hermes-desktop-theme-v2","petagent")'
                     '}catch(e){}</script>'

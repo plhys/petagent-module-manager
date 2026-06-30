@@ -1,7 +1,7 @@
 # PetAgent 扩展包 — 模块清单 (钩子注入版)
 
 name: PetAgent
-version: "2.0.13"
+version: "2.0.14"
 description: "Hermes Agent 独立扩展包 — 桌面宠物 + 主题皮肤 + 中文语言包 + 出图插件（模块化钩子注入）"
 author: "PetAgent"
 compatible: "hermes-agent >= v0.16.0"
@@ -41,7 +41,9 @@ modules:
   # ============================================================
   - id: theme
     name: "🎨 PetAgent 主题皮肤"
-    description: "PetClaw 单色品牌色板（亮色+暗色），气泡右对齐+圆角+三角尾巴，侧边栏紧凑配色，欢迎页品牌标识"
+    description: "PetClaw 单色品牌色板（亮色 Nous + 暗色 Mono），气泡右对齐+圆角+三角尾巴，侧边栏紧凑配色，欢迎页品牌标识"
+    hooks:
+      - presets.ts.hook
     dist_inject:
       theme: true
     copy:

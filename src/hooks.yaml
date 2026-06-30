@@ -7,5 +7,6 @@
 main.cjs.hook:           apps/desktop/electron/main.cjs
 preload.cjs.hook:        apps/desktop/electron/preload.cjs
 bootstrap-runner.hook:   apps/desktop/electron/bootstrap-runner.cjs
+presets.ts.hook:         apps/desktop/src/themes/presets.ts
 command-center.tsx.hook: apps/desktop/src/app/command-center/index.tsx
 right-sidebar.tsx.hook:  apps/desktop/src/app/right-sidebar/index.tsx

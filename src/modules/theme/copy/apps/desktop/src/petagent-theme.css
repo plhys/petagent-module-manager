@@ -1,29 +1,11 @@
 /* ═══ PetAgent 主题皮肤 ═══
- * 所有规则限定在 [data-hermes-theme="petagent"] 下，不影响其他主题 */
+ * 亮色 = Nous / 暗色 = Mono
+ * 颜色变量由 Hermes 主题系统（context.tsx）统一管理，
+ * 此文件只定义系统未覆盖的补充样式。 */
 
-/* ── 品牌色变量 ── */
+/* ── 亮色模式 ── */
+/* 颜色由主题系统管理（亮色 = Nous，气泡 #f0f0f0），CSS 只做排版微调 */
 [data-hermes-theme="petagent"] {
-  --theme-foreground: #18181b;
-  --theme-primary: #18181b;
-  --theme-secondary: color-mix(in srgb, #18181b 7%, #ffffff);
-  --theme-accent-soft: color-mix(in srgb, #18181b 10%, #ffffff);
-  --theme-midground: #18181b;
-  --theme-background-seed: #F8F8F8;
-  --theme-sidebar-seed: #ECECEE;
-  --theme-bubble-seed: color-mix(in srgb, #18181b 6%, #ffffff);
-  --theme-neutral-chrome: #F8F8F8;
-  --theme-neutral-sidebar: #ECECEE;
-  --theme-neutral-card: #ffffff;
-  --theme-mix-chrome: 92%;
-  --theme-mix-sidebar: 100%;
-  --theme-mix-card: 22%;
-  --theme-mix-elevated: 28%;
-  --theme-mix-bubble: 0%;
-
-  /* 亮色：黑底白字气泡 */
-  --dt-user-bubble: #18181b;
-  --dt-user-bubble-foreground: #ffffff;
-  --dt-user-bubble-border: #3f3f46;
   --dt-line-height: 1.6;
   --conversation-text-font-size: 0.9375rem;
   --sidebar-edge-border: transparent;
@@ -31,22 +13,22 @@
 
 /* ── 暗色模式 ── */
 [data-hermes-theme="petagent"].dark {
-  --theme-mix-chrome: 68%;
-  --theme-mix-card: 34%;
-  --theme-mix-elevated: 42%;
-  --theme-mix-bubble: 42%;
-  --theme-sidebar-seed: #2B2B2B;
-  --theme-neutral-chrome: #09090b;
-  --theme-neutral-sidebar: #2B2B2B;
-  --theme-neutral-card: #18181b;
+  /* 气泡：深色底 + 浅色字，在 Mono 暗色背景上清晰可见 */
+  --dt-user-bubble: #2a2a2a;
+  --dt-user-bubble-foreground: #e8e8e8;
+  --dt-user-bubble-border: #505050;
+
   --sidebar-edge-border: transparent;
   --composer-ring-strength: 1.3;
   --backdrop-invert-mul: 0;
 
-  /* 暗色：灰底黑字气泡 */
-  --dt-user-bubble: #d4d4d4;
-  --dt-user-bubble-foreground: #1a1a1a;
-  --dt-user-bubble-border: #a0a0a0;
+  /* 暗色模式下 Logo 反色 */
+  --dt-logo-filter: invert(1);
+}
+
+/* 强制气泡文字颜色（组件未使用 --dt-user-bubble-foreground） */
+[data-hermes-theme="petagent"].dark .composer-human-message {
+  color: #e8e8e8;
 }
 
 /* ── 侧边栏 ── */
