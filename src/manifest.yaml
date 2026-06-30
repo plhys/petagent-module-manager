@@ -1,7 +1,7 @@
 # PetAgent 扩展包 — 模块清单 (钩子注入版)
 
 name: PetAgent
-version: "2.0.6"
+version: "2.0.13"
 description: "Hermes Agent 独立扩展包 — 桌面宠物 + 主题皮肤 + 中文语言包 + 出图插件（模块化钩子注入）"
 author: "PetAgent"
 compatible: "hermes-agent >= v0.16.0"
