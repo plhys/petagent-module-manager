@@ -3,7 +3,7 @@
 
 from pathlib import Path
 
-SRC = Path(__file__).resolve().parent / "src"
+SRC = Path(SPECPATH).resolve() / "src"
 
 added_files = []
 added_files.append((str(SRC / "manifest.yaml"), "."))

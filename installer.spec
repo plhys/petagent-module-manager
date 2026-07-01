@@ -3,7 +3,7 @@
 
 from pathlib import Path
 
-SRC = Path(__file__).resolve().parent / "src"
+SRC = Path(SPECPATH).resolve() / "src"
 
 added_files = []
 added_files.append((str(SRC / "manifest.yaml"), "."))
@@ -17,6 +17,14 @@ for item in modules_dir.rglob("*"):
     if item.is_file():
         rel = item.relative_to(modules_dir)
         dest = f"modules/{rel.parent}"
+        added_files.append((str(item), dest))
+
+# 引擎文件（适配器 + 定制清单 + 运行时）
+engine_dir = SRC / "engine"
+for item in engine_dir.rglob("*"):
+    if item.is_file():
+        rel = item.relative_to(SRC)
+        dest = f"engine/{rel.parent}"
         added_files.append((str(item), dest))
 
 a = Analysis(

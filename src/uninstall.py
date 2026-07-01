@@ -49,6 +49,10 @@ def _clean_html_injections(html: str) -> str:
     """清理源码 index.html 中所有 PetAgent 注入的 <script> 和 <link>"""
     # 删除 petagent-theme.css 引用
     html = re.sub(r'\s*<link rel="stylesheet" href="[^"]*petagent-theme\.css"[^>]*>', '', html)
+    # 删除引擎脚本引用
+    html = re.sub(r'\s*<script src="[^"]*petagent-adapter\.js"></script>', '', html)
+    html = re.sub(r'\s*<script src="[^"]*petagent-config\.js"></script>', '', html)
+    html = re.sub(r'\s*<script src="[^"]*petagent-engine\.js"></script>', '', html)
     # 删除 navigator.language 覆盖脚本
     html = re.sub(
         r'\s*<script>\(function\(\)\{try\{Object\.defineProperty\(navigator,"language".*?\}\}\)\(\);</script>',
@@ -188,6 +192,10 @@ def _restore_asar(target: Path, emit):
 
     # 清理 PetAgent 注入的脚本和资源引用
     html = re.sub(
+        r'\s*<script src="petagent-(?:adapter|config|engine)\.js"></script>',
+        '', html
+    )
+    html = re.sub(
         r'\s*<script>try\{.*?hermes-desktop-user-themes-v1.*?\}catch\(e\)\{\}</script>',
         '', html, flags=re.DOTALL
     )
@@ -249,6 +257,9 @@ def _restore_asar(target: Path, emit):
     # 删除注入的静态文件
     injected_files = [
         "dist/petagent-theme.css",
+        "dist/petagent-adapter.js",
+        "dist/petagent-config.js",
+        "dist/petagent-engine.js",
         "dist/pet.html",
         "dist/pet-bubble.js",
         "dist/pet-bubble.html",
@@ -322,13 +333,21 @@ def main():
     def emit(level, msg):
         entry = {"level": level, "msg": str(msg)}
         if json_output:
-            print(json.dumps(entry, ensure_ascii=False), flush=True)
+            try:
+                print(json.dumps(entry, ensure_ascii=False), flush=True)
+            except UnicodeEncodeError:
+                print(json.dumps(entry, ensure_ascii=True), flush=True)
         else:
-            icon = {"ok": "✓", "warn": "⚠", "error": "✗", "info": "·"}.get(level, "·")
-            if level == "info":
-                print(msg)
-            else:
-                print(f"  {icon} {msg}")
+            icon = {"ok": "[OK]", "warn": "[WARN]", "error": "[ERR]", "info": ""}.get(level, "")
+            try:
+                if level == "info":
+                    print(msg)
+                else:
+                    print(f"  {icon} {msg}")
+            except UnicodeEncodeError:
+                # Fallback: strip non-ASCII characters for GBK consoles
+                safe = msg.encode("ascii", errors="replace").decode("ascii")
+                print(f"  {icon} {safe}")
 
     if not (target / 'pyproject.toml').exists():
         emit("error", f"错误: {target} 不是 Hermes Agent 根目录")

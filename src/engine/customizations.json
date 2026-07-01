@@ -1,0 +1,162 @@
+{
+  "_schema": "2.0",
+  "_description": "PetAgent 定制清单 —— 所有定制行为的声明式定义。修改此文件即可改变定制内容，无需改动引擎或适配器。",
+
+  "version": "2.0.14",
+
+  "preBoot": {
+    "_description": "必须在 Hermes React 应用加载前执行的脚本（localStorage、navigator 覆盖等）",
+
+    "theme": {
+      "_description": "通过 localStorage 注册 PetAgent 为用户自定义主题",
+      "localStorageKey": "hermes-desktop-user-themes-v1",
+      "activeThemeKey": "hermes-desktop-theme-v2",
+      "themeName": "petagent",
+
+      "colors": {
+        "background": "#FFFFFF",
+        "foreground": "#18181B",
+        "card": "#FFFFFF",
+        "cardForeground": "#18181B",
+        "muted": "#F5F5F5",
+        "mutedForeground": "#6B6B70",
+        "popover": "#FFFFFF",
+        "popoverForeground": "#18181B",
+        "primary": "#18181B",
+        "primaryForeground": "#FCFCFC",
+        "secondary": "#F0F0F0",
+        "secondaryForeground": "#242432",
+        "accent": "#E8E8E8",
+        "accentForeground": "#202030",
+        "border": "#E0E0E0",
+        "input": "#E8E8E8",
+        "ring": "#18181B",
+        "midground": "#18181B",
+        "composerRing": "#18181B",
+        "destructive": "#B94A3A",
+        "destructiveForeground": "#FFFFFF",
+        "sidebarBackground": "#ECECEE",
+        "sidebarBorder": "#E0E0E0",
+        "userBubble": "#f0f0f0",
+        "userBubbleBorder": "#a0a0a0"
+      },
+
+      "darkColors": {
+        "background": "#0e0e0e",
+        "foreground": "#eaeaea",
+        "card": "#141414",
+        "cardForeground": "#eaeaea",
+        "muted": "#1e1e1e",
+        "mutedForeground": "#808080",
+        "popover": "#181818",
+        "popoverForeground": "#eaeaea",
+        "primary": "#eaeaea",
+        "primaryForeground": "#0e0e0e",
+        "secondary": "#262626",
+        "secondaryForeground": "#c8c8c8",
+        "accent": "#222222",
+        "accentForeground": "#d8d8d8",
+        "border": "#2a2a2a",
+        "input": "#2a2a2a",
+        "ring": "#9a9a9a",
+        "midground": "#9a9a9a",
+        "composerRing": "#9a9a9a",
+        "destructive": "#a84040",
+        "destructiveForeground": "#fef2f2",
+        "sidebarBackground": "#0a0a0a",
+        "sidebarBorder": "#202020",
+        "userBubble": "#1a1a1a",
+        "userBubbleBorder": "#363636"
+      }
+    },
+
+    "zh": {
+      "_description": "中文语言包 —— 覆盖 Hermes 内置翻译 + 强制中文语言检测",
+
+      "updateTranslations": {
+        "portableTitle": "便携版更新",
+        "portableBody": "当前为 Hermes Desktop 离线部署便携版，应用内自动更新不可用。",
+        "portableDownload": "前往下载",
+        "portableUpdateMessage": "当前为 Hermes Desktop 离线部署便携版",
+        "portableQuarkLink": "夸克网盘",
+        "portableMobileLink": "移动云盘"
+      },
+
+      "modelTranslations": {
+        "persistGlobalSession": "全局保存 (否则仅当前会话)",
+        "persistGlobal": "全局保存"
+      },
+
+      "navigatorOverride": "zh-CN",
+
+      "i18nBundlePatches": [
+        {
+          "search": "restartGateway:`重启网关`",
+          "replace": "restartGateway:`重启消息服务`"
+        },
+        {
+          "search": "gatewayRestartFailed:`网关重启失败。`",
+          "replace": "gatewayRestartFailed:`消息服务重启失败。`"
+        },
+        {
+          "search": "restartToApply:`此更改将在网关重启后生效。`",
+          "replace": "restartToApply:`重启网关后此更改才会生效。`"
+        },
+        {
+          "search": "restartToReconnect:`新凭据将在网关重启后生效。`",
+          "replace": "restartToReconnect:`重启网关以使用新凭据重新连接。`"
+        },
+        {
+          "search": "weixin:\"运行 `hermes gateway setup`，选择 Weixin，然后使用个人微信账号扫描并确认二维码。Hermes 会通过腾讯 iLink Bot API 连接并保存凭据。\"",
+          "replace": "weixin:\"登录微信公众平台，复制 AppID 和 Token，并把消息回调 URL 指向 Hermes。\""
+        }
+      ]
+    }
+  },
+
+  "dom": {
+    "_description": "DOM 元素注入 —— 引擎通过 MutationObserver 等待目标元素后执行",
+
+    "customizations": [
+      {
+        "id": "welcome-brand",
+        "description": "欢迎页品牌标识 —— 大号 PetAgent logo 居中显示",
+        "anchor": "welcomeContainer",
+        "action": "set-html",
+        "persistent": false,
+        "html": "<div style=\"display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:18rem;padding:2rem 0\"><img src=\"./pet-agent-logo.png\" alt=\"PET AGENT\" style=\"display:block;margin:0 auto 0.75rem;height:auto;width:28rem;max-width:90%;object-fit:contain;opacity:1\"><p style=\"margin:0.5rem 0 0 0;text-align:center;line-height:1.5;letter-spacing:-0.01em;font-size:1.05rem;color:var(--dt-muted-foreground, #6B6B70)\">有什么需要帮忙的？喵～</p></div>"
+      },
+      {
+        "id": "sidebar-brand",
+        "description": "侧边栏品牌标识 —— logo + HERMES 标签",
+        "anchor": "sidebarContent",
+        "action": "prepend",
+        "persistent": true,
+        "html": "<div style=\"position:relative;display:block;height:1.7rem;margin-top:calc(var(--titlebar-height, 34px) + 0.375rem);padding:0 0.5rem;flex-shrink:0\"><img src=\"./logo.png\" alt=\"\" style=\"height:1.5rem;width:auto;opacity:0.9;vertical-align:middle\"><span style=\"position:absolute;left:2.05rem;top:0;font-size:0.42rem;font-weight:600;letter-spacing:0.06em;color:#888;text-transform:uppercase;line-height:1.7rem\">HERMES</span></div>"
+      }
+    ]
+  },
+
+  "css": {
+    "_description": "CSS 规则 —— 当前暂由 petagent-theme.css 管理，后续可迁移到此配置中由引擎动态注入",
+
+    "managedBy": "petagent-theme.css",
+    "note": "以下选择器已在适配器中定义，供 CSS 文件和引擎共同使用",
+
+    "anchorUsage": {
+      "themeRoot": ["基础排版变量", "侧边栏边框"],
+      "darkModeClass_with_themeRoot": ["暗色气泡颜色", "暗色侧边栏logo反色"],
+      "userMessageBubble": ["气泡强制颜色", "用户图片缩略图"],
+      "sidebar": ["侧边栏背景色"],
+      "sidebarContent": ["侧边栏品牌logo（::before 伪元素，base64 图片）"],
+      "welcomeHermes": ["欢迎页 Hermes 内容显示/隐藏"],
+      "welcomePetagent": ["欢迎页 PetAgent 内容显示/隐藏、logo 样式"],
+      "assistantMessageContent": ["工具块左侧边框"],
+      "toolBlock": ["工具块左侧边框"],
+      "thinkingDisclosure": ["思考块左侧边框"],
+      "userImage": ["用户消息中图片的缩略图样式"],
+      "userMessageText": ["用户消息文本样式"],
+      "userMessageRoot": ["用户消息根元素背景重置"]
+    }
+  }
+}

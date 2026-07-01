@@ -50,6 +50,11 @@ modules:
       - apps/desktop/src/custom-theme.css
       - apps/desktop/src/petagent-theme.css
       - apps/desktop/dist/logo.png
+    engine:
+      _description: "主题模块使用 PetAgent 注入引擎来管理 DOM 定制（欢迎页品牌替换等）"
+      adapter: "engine/adapters/hermes-v0.16.js"
+      config: "engine/customizations.json"
+      runtime: "engine/petagent-engine.js"
 
   # ============================================================
   # 模块 3: 中文语言包

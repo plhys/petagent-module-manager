@@ -36,6 +36,15 @@ def _load_yaml(path):
         return yaml.safe_load(f)
 
 
+def _safe_print(s):
+    """Print fallback: strip unicode if console can't handle it."""
+    try:
+        print(s)
+    except UnicodeEncodeError:
+        safe = s.encode("ascii", errors="replace").decode("ascii")
+        print(safe)
+
+
 def main():
     p = argparse.ArgumentParser(
         description="PetAgent — Hermes Agent 一键补丁工具",
@@ -64,7 +73,7 @@ def main():
         for m in manifest.get("modules", []):
             name = m.get("name", m["id"])
             disabled = " [暂不可用]" if m.get("disabled") else ""
-            print(f"  {m['id']:20s} {name}{disabled}")
+            _safe_print(f"  {m['id']:20s} {name}{disabled}")
         return
 
     # 确定目标目录
@@ -73,14 +82,14 @@ def main():
     else:
         target, desc = find_hermes_installation()
         if target is None:
-            print("❌ 未找到 Hermes 安装目录。请用 --target 指定路径。")
-            print("   常见路径: %LOCALAPPDATA%\\hermes\\hermes-agent")
+            _safe_print("[ERR] 未找到 Hermes 安装目录。请用 --target 指定路径。")
+            _safe_print("   常见路径: %LOCALAPPDATA%\\hermes\\hermes-agent")
             sys.exit(1)
-        print(f"🔍 自动发现 Hermes: {target}")
-        print(f"   ({desc})")
+        _safe_print(f"[..] 自动发现 Hermes: {target}")
+        _safe_print(f"   ({desc})")
 
     if not target.exists():
-        print(f"❌ 目标目录不存在: {target}")
+        _safe_print(f"[ERR] 目标目录不存在: {target}")
         sys.exit(1)
 
     # 版本检查
@@ -88,18 +97,18 @@ def main():
     if stamp:
         commit = stamp.get("commit", "?")[:12]
         branch = stamp.get("branch", "?")
-        print(f"📋 Hermes 版本: {commit} ({branch})")
+        _safe_print(f"[..] Hermes 版本: {commit} ({branch})")
     for w in warnings:
-        print(f"⚠️  {w}")
+        _safe_print(f"[WARN] {w}")
 
     # 自动关闭 Hermes
     if not args.no_kill:
         asar_path = get_asar_path(target)
         if asar_path and asar_path.exists():
             if kill_hermes_process():
-                print("🛑 已关闭 Hermes 进程")
+                _safe_print("[OK] 已关闭 Hermes 进程")
             else:
-                print("⚠️  Hermes 可能正在运行，asar 注入可能失败。请手动关闭后重试")
+                _safe_print("[WARN] Hermes 可能正在运行，asar 注入可能失败。请手动关闭后重试")
 
     # 确定模块
     if args.install is not None:
@@ -122,13 +131,13 @@ def main():
         # 临时替换 _handle_asar 为空操作
         installer._handle_asar = lambda: None
 
-    print(f"📦 安装模块: {', '.join(ids)}")
+    _safe_print(f"[..] 安装模块: {', '.join(ids)}")
     r = installer.install(ids)
 
     if r["success"]:
-        print("✅ 安装完成！重新启动 Hermes 即可看到效果。")
+        _safe_print("[OK] 安装完成！重新启动 Hermes 即可看到效果。")
     else:
-        print("❌ 安装过程中出现错误，请检查日志。")
+        _safe_print("[ERR] 安装过程中出现错误，请检查日志。")
         sys.exit(1)
 
 

@@ -68,6 +68,10 @@
         "to": "backend/modules"
       },
       {
+        "from": "../engine",
+        "to": "backend/engine"
+      },
+      {
         "from": "node_modules/@electron/asar",
         "to": "node_modules/@electron/asar"
       },
