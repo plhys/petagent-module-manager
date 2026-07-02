@@ -1,6 +1,6 @@
 {
   "name": "petagent-manager",
-  "version": "2.0.4",
+  "version": "2.0.24",
   "description": "PetAgent 模块管理器 — Hermes Agent 扩展补丁一键安装工具",
   "author": "PetAgent",
   "main": "main.js",

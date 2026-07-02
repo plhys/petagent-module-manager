@@ -677,8 +677,7 @@ class HookInstaller:
                 else:
                     asar_rel = item
                 dst = app_dir / asar_rel
-                if dst.exists():
-                    continue
+                # PetAgent 管理的文件（logo、CSS、引擎等）始终覆盖
                 try:
                     dst.parent.mkdir(parents=True, exist_ok=True)
                     if src.is_dir():
@@ -702,8 +701,7 @@ class HookInstaller:
                     else:
                         asar_rel = item
                     dst = app_dir / asar_rel
-                    if dst.exists():
-                        continue
+                    # PetAgent 管理的文件始终覆盖
                     try:
                         dst.parent.mkdir(parents=True, exist_ok=True)
                         if src.is_dir():
@@ -847,16 +845,37 @@ class HookInstaller:
                 self.log("dist copy: petagent-theme.css", "ok")
 
         # 6. 清理旧注入 + 写入新注入
+        # 彻底清理：移除所有包含 PetAgent 相关关键词的 <script> 和 <link> 标签
         css_link = '<link rel="stylesheet" href="petagent-theme.css">'
         import re as _re
+
+        # 清理 PetAgent CSS link
         html = _re.sub(r'<link rel="stylesheet" href="petagent-theme\.css">\s*', '', html)
-        html = _re.sub(r'<script src="petagent-(?:adapter|config|engine)\.js"></script>\s*', '', html)
-        html = _re.sub(r'<script>try\{.*?hermes-desktop-user-themes.*?\}catch\(e\)\{\}</script>\s*', '', html)
-        html = _re.sub(r'<script>try\{.*?hermes-desktop-theme-v2.*?\}catch\(e\)\{\}</script>\s*', '', html)
-        html = _re.sub(r'<script>\(function\(\).*?intro-hermes.*?\}\)\(\);</script>\s*', '', html)
-        html = _re.sub(r'<script>try\{.*?__hermesUpdateTranslations.*?\}catch\(e\)\{\}</script>\s*', '', html)
-        html = _re.sub(r'<script>\(function\(\).*?navigator\.language.*?\}\)\(\);</script>\s*', '', html)
-        html = _re.sub(r'<script>\s*\n\s*\(function installPetRendererBridge.*?</script>\s*', '', html, flags=_re.DOTALL)
+        html = _re.sub(r'<link rel="stylesheet" href="/petagent-theme\.css">\s*', '', html)
+
+        # 清理引擎脚本标签
+        html = _re.sub(r'<script src="/?petagent-(?:adapter|config|engine)\.js"></script>\s*', '', html)
+
+        # 清理主题 localStorage 注入（多种旧格式）
+        html = _re.sub(r'<script>\s*\(function\(\)\s*\{try\{var\s+k="hermes-desktop-user-themes-v1"[\s\S]*?catch\(e\)\{\}\}\)\(\);\s*</script>\s*', '', html)
+        html = _re.sub(r'<script>try\{[\s\S]*?hermes-desktop-user-themes[\s\S]*?catch\(e\)\{\}</script>\s*', '', html)
+        html = _re.sub(r'<script>try\{[\s\S]*?hermes-desktop-theme-v2[\s\S]*?catch\(e\)\{\}</script>\s*', '', html)
+
+        # 清理欢迎页旧注入
+        html = _re.sub(r'<script>\(function\(\)[\s\S]*?intro-hermes[\s\S]*?</script>\s*', '', html)
+
+        # 清理翻译注入
+        html = _re.sub(r'<script>try\{[\s\S]*?__hermesUpdateTranslations[\s\S]*?catch\(e\)\{\}</script>\s*', '', html)
+
+        # 清理 navigator 语言覆盖（多种格式）
+        html = _re.sub(r'<script>\s*\(function\(\)[\s\S]*?navigator\.language[\s\S]*?</script>\s*', '', html)
+        html = _re.sub(r'<script>\(function\(\)[\s\S]*?navigator\.language[\s\S]*?</script>\s*', '', html)
+
+        # 清理宠物桥接脚本（大块，可能跨多行）
+        html = _re.sub(r'<script>\s*\n\s*\(function installPetRendererBridge[\s\S]*?</script>\s*', '', html)
+
+        # 清理其他 PetAgent 相关脚本（兜底）
+        html = _re.sub(r'<script>\s*\(function\(\)\s*\{try\{var\s+k="hermes-desktop-user-themes-v1"[\s\S]*?</script>\s*', '', html)
 
         all_injections = []
         if has_theme:
@@ -911,6 +930,6 @@ class HookInstaller:
         for logo_name in ["pet-agent-logo.png", "logo.png"]:
             logo_src = app_dir / "public" / logo_name
             logo_dst = dist_dir / logo_name
-            if logo_src.exists() and not logo_dst.exists():
+            if logo_src.exists():
                 shutil.copy2(str(logo_src), str(logo_dst))
                 self.log(f"dist copy: {logo_name}", "ok")

@@ -32,6 +32,8 @@ window.__petagent_anchors = {
   welcomeHermes: '.intro-hermes',
   /** PetAgent 替换的欢迎页内容 */
   welcomePetagent: '.intro-petagent',
+  /** PetAgent 欢迎页中的副标题 <p> 元素 */
+  welcomePetagentText: '.intro-petagent p',
 
   // ─────────────────────────────────────────────────────────
   // 侧边栏

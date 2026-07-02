@@ -134,6 +134,10 @@ const API = {
     async checkInstalled() {
         if (isElectron) return window.electronAPI.checkInstalled()
         return (await fetch('/api/check-installed')).json()
+    },
+    async openHermes() {
+        if (isElectron) return window.electronAPI.openHermes()
+        return { success: false, error: '仅 Electron 模式支持' }
     }
 }
 
@@ -378,6 +382,7 @@ const UI = {
         const right = el('div', { className: 'right' })
         right.appendChild(el('button', { className: 'btn btn-danger', id: 'btnUninstall', style: { display: 'none' } }, '🗑 卸载'))
         right.appendChild(el('button', { className: 'btn btn-update', id: 'btnUpdate', style: { display: 'none' } }, '🔄 更新'))
+        right.appendChild(el('button', { className: 'btn btn-accent', id: 'btnOpenHermes', style: { display: 'none' } }, '▶ 打开 Hermes'))
         right.appendChild(el('button', { className: 'btn btn-accent', id: 'btnInstall' }, '🔧 开始安装'))
         bar.appendChild(right)
         return bar
@@ -413,6 +418,11 @@ const UI = {
             btnUpdate.disabled = !canUninstall
             btnUpdate.style.display = State.targetValid && State.canUpdate ? '' : 'none'
         }
+        const btnOpenHermes = document.getElementById('btnOpenHermes')
+        if (btnOpenHermes) {
+            btnOpenHermes.disabled = !canUninstall
+            btnOpenHermes.style.display = State.targetValid ? '' : 'none'
+        }
     },
 
     // ── 事件绑定 ──
@@ -437,6 +447,7 @@ const UI = {
                 case 'btnInstall': UI._doInstall(); break
                 case 'btnUninstall': UI._doUninstall(); break
                 case 'btnUpdate': UI._doUpdate(); break
+                case 'btnOpenHermes': UI._doOpenHermes(); break
             }
         })
 
@@ -568,6 +579,18 @@ const UI = {
             State.installing = false
             State._logLines = [{ level: 'error', msg: '更新失败: ' + e.message }]
             UI.refresh()
+        }
+    },
+
+    async _doOpenHermes() {
+        if (!State.targetValid) return
+        try {
+            const result = await API.openHermes()
+            if (!result.success) {
+                alert('打开 Hermes 失败: ' + (result.error || '未知错误'))
+            }
+        } catch (e) {
+            alert('打开 Hermes 失败: ' + e.message)
         }
     }
 }

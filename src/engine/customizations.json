@@ -1,18 +1,14 @@
 {
   "_schema": "2.0",
   "_description": "PetAgent 定制清单 —— 所有定制行为的声明式定义。修改此文件即可改变定制内容，无需改动引擎或适配器。",
-
-  "version": "2.0.14",
-
+  "version": "2.0.24",
   "preBoot": {
     "_description": "必须在 Hermes React 应用加载前执行的脚本（localStorage、navigator 覆盖等）",
-
     "theme": {
       "_description": "通过 localStorage 注册 PetAgent 为用户自定义主题",
       "localStorageKey": "hermes-desktop-user-themes-v1",
       "activeThemeKey": "hermes-desktop-theme-v2",
       "themeName": "petagent",
-
       "colors": {
         "background": "#FFFFFF",
         "foreground": "#18181B",
@@ -40,7 +36,6 @@
         "userBubble": "#f0f0f0",
         "userBubbleBorder": "#a0a0a0"
       },
-
       "darkColors": {
         "background": "#0e0e0e",
         "foreground": "#eaeaea",
@@ -69,10 +64,8 @@
         "userBubbleBorder": "#363636"
       }
     },
-
     "zh": {
       "_description": "中文语言包 —— 覆盖 Hermes 内置翻译 + 强制中文语言检测",
-
       "updateTranslations": {
         "portableTitle": "便携版更新",
         "portableBody": "当前为 Hermes Desktop 离线部署便携版，应用内自动更新不可用。",
@@ -81,14 +74,11 @@
         "portableQuarkLink": "夸克网盘",
         "portableMobileLink": "移动云盘"
       },
-
       "modelTranslations": {
         "persistGlobalSession": "全局保存 (否则仅当前会话)",
         "persistGlobal": "全局保存"
       },
-
       "navigatorOverride": "zh-CN",
-
       "i18nBundlePatches": [
         {
           "search": "restartGateway:`重启网关`",
@@ -113,19 +103,9 @@
       ]
     }
   },
-
   "dom": {
-    "_description": "DOM 元素注入 —— 引擎通过 MutationObserver 等待目标元素后执行",
-
+    "_description": "DOM 元素注入 —— 引擎通过 MutationObserver 等待目标元素后执行。注意：欢迎页由 CSS 纯覆盖实现（React 会覆盖 DOM 操作），此处只保留侧边栏品牌。",
     "customizations": [
-      {
-        "id": "welcome-brand",
-        "description": "欢迎页品牌标识 —— 大号 PetAgent logo 居中显示",
-        "anchor": "welcomeContainer",
-        "action": "set-html",
-        "persistent": false,
-        "html": "<div style=\"display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:18rem;padding:2rem 0\"><img src=\"./pet-agent-logo.png\" alt=\"PET AGENT\" style=\"display:block;margin:0 auto 0.75rem;height:auto;width:28rem;max-width:90%;object-fit:contain;opacity:1\"><p style=\"margin:0.5rem 0 0 0;text-align:center;line-height:1.5;letter-spacing:-0.01em;font-size:1.05rem;color:var(--dt-muted-foreground, #6B6B70)\">有什么需要帮忙的？喵～</p></div>"
-      },
       {
         "id": "sidebar-brand",
         "description": "侧边栏品牌标识 —— logo + HERMES 标签",
@@ -133,30 +113,74 @@
         "action": "prepend",
         "persistent": true,
         "html": "<div style=\"position:relative;display:block;height:1.7rem;margin-top:calc(var(--titlebar-height, 34px) + 0.375rem);padding:0 0.5rem;flex-shrink:0\"><img src=\"./logo.png\" alt=\"\" style=\"height:1.5rem;width:auto;opacity:0.9;vertical-align:middle\"><span style=\"position:absolute;left:2.05rem;top:0;font-size:0.42rem;font-weight:600;letter-spacing:0.06em;color:#888;text-transform:uppercase;line-height:1.7rem\">HERMES</span></div>"
+      },
+      {
+        "id": "hide-artifacts-nav",
+        "description": "隐藏左侧边栏的产物导航按钮（产物已整合到右侧边栏标签页）",
+        "anchor": "themeRoot",
+        "action": "run-script",
+        "persistent": true,
+        "scriptId": "hide-artifacts",
+        "script": "(() => { var found = 0; var buttons = document.querySelectorAll('[data-sidebar=\"menu-button\"]'); for (var i = 0; i < buttons.length; i++) { var btn = buttons[i]; var txt = (btn.textContent || '').replace(/\\s+/g, ' ').trim(); if (txt.indexOf('制品') >= 0 || txt.indexOf('artifact') >= 0) { btn.style.setProperty('display', 'none', 'important'); found++; } } return 'hidden ' + found + ' artifact buttons'; })()"
+      },
+      {
+        "id": "bubble-click-copy",
+        "description": "点击用户气泡：复制内容 + 显示已复制提示，阻止进入编辑模式；按钮容器垂直居中",
+        "anchor": "themeRoot",
+        "action": "run-script",
+        "persistent": true,
+        "scriptId": "bubble-copy",
+        "script": "(function() { if (window.__petagentBubbleFixed) return; window.__petagentBubbleFixed = true; function showToast(msg) { var t = document.createElement('div'); t.textContent = msg; t.style.cssText = 'position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:rgba(0,0,0,0.85);color:#fff;padding:12px 24px;border-radius:12px;z-index:99999;font-size:14px;pointer-events:none;transition:opacity 0.3s;box-shadow:0 4px 16px rgba(0,0,0,0.2)'; document.body.appendChild(t); setTimeout(function(){ t.style.opacity='0'; setTimeout(function(){ t.remove(); },300); },1500); } function copyBubbleText(bubble) { var clone = bubble.cloneNode(true); clone.querySelectorAll('.absolute, .pointer-events-none').forEach(function(el){ el.remove(); }); var text = clone.textContent.trim(); if (text) { navigator.clipboard.writeText(text).catch(function(){}); showToast('已复制'); } } function isActionButton(target) { return target.closest('.composer-human-message .absolute'); } function fixButtonPosition() { document.querySelectorAll('.composer-human-message').forEach(function(bubble) { var container = bubble.querySelector('.absolute.bottom-2') || bubble.querySelector('[class*=\"absolute\"][class*=\"bottom-\"]') || bubble.querySelector('.absolute'); if (container) { container.style.bottom = 'auto'; container.style.top = '50%'; container.style.transform = 'translateY(-50%)'; container.style.zIndex = '10'; } }); } function intercept(e) { var bubble = e.target.closest('.composer-human-message'); if (!bubble) return; if (isActionButton(e.target)) return; e.stopImmediatePropagation(); e.stopPropagation(); copyBubbleText(bubble); } document.documentElement.addEventListener('pointerdown', intercept, true); document.documentElement.addEventListener('click', intercept, true); fixButtonPosition(); var mo = new MutationObserver(function(ms) { var needFix = false; ms.forEach(function(m) { m.addedNodes.forEach(function(node) { if (node.nodeType !== 1) return; if (node.classList && node.classList.contains('composer-human-message')) { needFix = true; } if (node.querySelectorAll) { var found = node.querySelectorAll('.composer-human-message'); if (found.length) needFix = true; } }); }); if (needFix) fixButtonPosition(); }); mo.observe(document.body, { childList: true, subtree: true }); })()"
       }
     ]
   },
-
   "css": {
     "_description": "CSS 规则 —— 当前暂由 petagent-theme.css 管理，后续可迁移到此配置中由引擎动态注入",
-
     "managedBy": "petagent-theme.css",
     "note": "以下选择器已在适配器中定义，供 CSS 文件和引擎共同使用",
-
     "anchorUsage": {
-      "themeRoot": ["基础排版变量", "侧边栏边框"],
-      "darkModeClass_with_themeRoot": ["暗色气泡颜色", "暗色侧边栏logo反色"],
-      "userMessageBubble": ["气泡强制颜色", "用户图片缩略图"],
-      "sidebar": ["侧边栏背景色"],
-      "sidebarContent": ["侧边栏品牌logo（::before 伪元素，base64 图片）"],
-      "welcomeHermes": ["欢迎页 Hermes 内容显示/隐藏"],
-      "welcomePetagent": ["欢迎页 PetAgent 内容显示/隐藏、logo 样式"],
-      "assistantMessageContent": ["工具块左侧边框"],
-      "toolBlock": ["工具块左侧边框"],
-      "thinkingDisclosure": ["思考块左侧边框"],
-      "userImage": ["用户消息中图片的缩略图样式"],
-      "userMessageText": ["用户消息文本样式"],
-      "userMessageRoot": ["用户消息根元素背景重置"]
+      "themeRoot": [
+        "基础排版变量",
+        "侧边栏边框"
+      ],
+      "darkModeClass_with_themeRoot": [
+        "暗色气泡颜色",
+        "暗色侧边栏logo反色"
+      ],
+      "userMessageBubble": [
+        "气泡强制颜色",
+        "用户图片缩略图"
+      ],
+      "sidebar": [
+        "侧边栏背景色"
+      ],
+      "sidebarContent": [
+        "侧边栏品牌logo（::before 伪元素，base64 图片）"
+      ],
+      "welcomeHermes": [
+        "欢迎页 Hermes 内容显示/隐藏"
+      ],
+      "welcomePetagent": [
+        "欢迎页 PetAgent 内容显示/隐藏、logo 样式"
+      ],
+      "assistantMessageContent": [
+        "工具块左侧边框"
+      ],
+      "toolBlock": [
+        "工具块左侧边框"
+      ],
+      "thinkingDisclosure": [
+        "思考块左侧边框"
+      ],
+      "userImage": [
+        "用户消息中图片的缩略图样式"
+      ],
+      "userMessageText": [
+        "用户消息文本样式"
+      ],
+      "userMessageRoot": [
+        "用户消息根元素背景重置"
+      ]
     }
   }
 }

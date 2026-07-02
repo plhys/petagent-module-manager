@@ -181,6 +181,11 @@
         el.innerHTML = rule.html || ''
         break
 
+      case 'set-text':
+        // 精准替换文本内容，不影响子元素结构
+        el.textContent = rule.text || ''
+        break
+
       case 'replace-children':
         // 保存原始子元素（通过 CSS 隐藏而非删除，保留 React 事件绑定）
         wrapOriginals(el, rule)
@@ -205,6 +210,19 @@
 
       case 'insert-after':
         el.insertAdjacentHTML('afterend', rule.html || '')
+        break
+
+      case 'run-script':
+        try {
+          if (typeof rule.script === 'string') {
+            var scriptResult = (0, eval)(rule.script)
+            if (rule.scriptId) {
+              console.log('[petagent-debug:' + rule.scriptId + ']', scriptResult)
+            }
+          }
+        } catch (e) {
+          console.error('[petagent-engine] Script error:', rule.scriptId, e.message)
+        }
         break
 
       default:

@@ -16,4 +16,5 @@ contextBridge.exposeInMainWorld('electronAPI', {
   },
   uninstall: () => ipcRenderer.invoke('uninstall'),
   checkInstalled: () => ipcRenderer.invoke('check-installed'),
+  openHermes: () => ipcRenderer.invoke('open-hermes'),
 })

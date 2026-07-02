@@ -49,6 +49,7 @@ require('./ipc/target').register(ipcMain, ctx)
 require('./ipc/install').register(ipcMain, ctx)
 require('./ipc/uninstall').register(ipcMain, ctx)
 require('./ipc/status').register(ipcMain, ctx)
+require('./ipc/open-hermes').register(ipcMain, ctx)
 
 // ── 启动 ──
 app.whenReady().then(createWindow)
